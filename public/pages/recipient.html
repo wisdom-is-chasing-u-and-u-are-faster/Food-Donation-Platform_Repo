@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipient Portal | Enterprise Food Donation Platform</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="recipient">
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">🏢</div>
+            <div>
+                <div class="brand-title">Recipient Logistics Portal</div>
+                <span class="brand-badge" id="recipientOrgName">St. Anthony Foundation Dining Room</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Overview</a>
+            <a href="/pages/administrator.html" class="nav-link">Administrator</a>
+            <a href="/pages/donor.html" class="nav-link">Donor Portal</a>
+            <a href="/pages/recipient.html" class="nav-link active">Recipient Portal</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="telemetry-banner">
+            <div class="telemetry-title">
+                <h1>Recipient Inbound Intake & Storage Capacity</h1>
+                <p>Manage shelter intake capacity, monitor incoming food deliveries, and complete cryptographic courier handshakes.</p>
+            </div>
+            <div class="telemetry-status-bar">
+                <select id="recipientSelector" class="form-control" style="width: auto; padding: 0.4rem 0.75rem; font-size: 0.8125rem;">
+                    <option value="org_recip_001">St. Anthony Foundation Dining Room</option>
+                    <option value="org_recip_002">Glide Memorial Community Kitchen</option>
+                    <option value="org_recip_003">Mission Neighborhood Food Pantry</option>
+                </select>
+                <div class="refresh-countdown" id="refreshTimerDisplay">Auto-refresh: 20s</div>
+                <button class="btn btn-secondary" id="manualRefreshBtn" style="padding: 0.4rem 0.75rem; font-size: 0.8125rem;">↻</button>
+            </div>
+        </section>
+
+        <!-- KPI Grid -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">Storage Capacity In Use</span>
+                <div class="kpi-value" id="capacityPercent">--</div>
+                <div class="kpi-subtext positive">Cold & hot holding active</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Meals Distributed</span>
+                <div class="kpi-value" id="mealsDistributed">--</div>
+                <div class="kpi-subtext positive">Verified humanitarian relief</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Safe Transit Window Timer</span>
+                <div class="kpi-value" id="safeWindowTimer">--</div>
+                <div class="kpi-subtext positive">Biological safe window active</div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <!-- Incoming Deliveries -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">Inbound Deliveries in Transit</h2>
+                    <span class="badge badge-warning">Live Mesh Routing</span>
+                </div>
+                <div id="incomingDeliveriesList">
+                    <p style="color: var(--text-muted);">Loading incoming deliveries...</p>
+                </div>
+            </div>
+
+            <!-- Handover & Cryptographic QR Verification -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">Digital Chain of Custody Handshake</h2>
+                </div>
+                <p style="font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Confirm courier handover using OTP handshake or QR token verification.
+                </p>
+                <form id="handshakeManualForm" onsubmit="event.preventDefault(); submitManualHandshake();">
+                    <div class="form-group">
+                        <label class="form-label">Donation / Delivery ID</label>
+                        <input type="text" class="form-control" id="handshakeDonId" value="don_1001" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Courier One-Time Handshake Pin (OTP)</label>
+                        <input type="text" class="form-control" id="handshakeOtp" value="9182" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        🔐 Verify Inbound Delivery & Commit to Ledger
+                    </button>
+                </form>
+                <div id="handshakeResultAlert" style="margin-top: 1rem; display: none;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script>
+        async function submitManualHandshake() {
+            const donId = document.getElementById('handshakeDonId').value;
+            const otp = document.getElementById('handshakeOtp').value;
+            const alertEl = document.getElementById('handshakeResultAlert');
+
+            try {
+                const res = await apiClient.verifyHandshake(donId, 'RECIPIENT_DELIVERY_CONFIRMED', otp, 'SIG_ECDSA_RECIP_MANUAL', 'PUBKEY_RECIP_ST_ANTHONY');
+                alertEl.style.display = 'block';
+                alertEl.className = 'alert alert-success';
+                alertEl.innerHTML = `✅ Delivery confirmed! Cryptographic Block Hash: <code>${res.ledger_hash.substring(0, 24)}...</code>`;
+                loadActiveViewData();
+            } catch (err) {
+                alertEl.style.display = 'block';
+                alertEl.className = 'alert alert-danger';
+                alertEl.textContent = `Verification error: ${err.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
