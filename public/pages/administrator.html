@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Dashboard | Enterprise Food Donation Platform</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="admin">
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">⚙️</div>
+            <div>
+                <div class="brand-title">Admin Operations Center</div>
+                <span class="brand-badge">FoodMesh Core</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Overview</a>
+            <a href="/pages/administrator.html" class="nav-link active">Administrator</a>
+            <a href="/pages/donor.html" class="nav-link">Donor Portal</a>
+            <a href="/pages/recipient.html" class="nav-link">Recipient Portal</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="telemetry-banner">
+            <div class="telemetry-title">
+                <h1>Executive Telemetry & Incident Center</h1>
+                <p>System-wide health telemetry, HACCP thermal alert monitor, and 3PL courier failover telemetry.</p>
+            </div>
+            <div class="telemetry-status-bar">
+                <span class="pulse-indicator"></span>
+                <div class="refresh-countdown" id="refreshTimerDisplay">Auto-refresh: 20s</div>
+                <button class="btn btn-secondary" id="manualRefreshBtn" style="padding: 0.4rem 0.75rem; font-size: 0.8125rem;">↻ Refresh</button>
+            </div>
+        </section>
+
+        <!-- KPI Grid -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">Active Mesh Rescues</span>
+                <div class="kpi-value" id="activeDonationsCount">--</div>
+                <div class="kpi-subtext positive">In-flight deliveries</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Geospatial Latency (P99)</span>
+                <div class="kpi-value" id="matchLatencyP99">--</div>
+                <div class="kpi-subtext positive">P99 < 30.0s SLA</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Claim Fulfillment</span>
+                <div class="kpi-value" id="fulfillmentRate">--</div>
+                <div class="kpi-subtext positive">Target >= 85.0%</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Safe Transit Compliance</span>
+                <div class="kpi-value" id="complianceRate">--</div>
+                <div class="kpi-subtext positive">Good Samaritan Compliant</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Active 3PL Failovers</span>
+                <div class="kpi-value" id="activeFailovers">--</div>
+                <div class="kpi-subtext warning">DoorDash / Uber Direct</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">HACCP Alert Violations</span>
+                <div class="kpi-value" id="haccpViolations">0</div>
+                <div class="kpi-subtext positive">Zero gross negligence</div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">Real-Time Dispatch Mesh & SLA Timers</h2>
+                    <span class="badge badge-info">300s TTL Failover</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dispatch ID</th>
+                                <th>Item & Weight</th>
+                                <th>Carrier Fleet</th>
+                                <th>Status</th>
+                                <th>TTL Remaining</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dispatchesTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted);">Loading dispatches...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">HACCP Thermal Sensor Logger</h2>
+                </div>
+                <p style="font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Submit IoT sensor reading to verify food safety thresholds (<41°F cold / >135°F hot).
+                </p>
+                <form id="thermalSensorForm" onsubmit="event.preventDefault(); submitThermalReading();">
+                    <div class="form-group">
+                        <label class="form-label">Donation ID</label>
+                        <input type="text" class="form-control" id="sensorDonationId" value="don_1001" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Core Food Temp (°F)</label>
+                        <input type="number" step="0.1" class="form-control" id="sensorTempF" value="138.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sensor ID</label>
+                        <input type="text" class="form-control" id="sensorIdInput" value="IOT_TEMP_PROBE_09">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Log Thermal Reading
+                    </button>
+                </form>
+                <div id="thermalAlert" style="margin-top: 1rem; display: none;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script>
+        async function submitThermalReading() {
+            const donId = document.getElementById('sensorDonationId').value;
+            const tempF = parseFloat(document.getElementById('sensorTempF').value);
+            const sensorId = document.getElementById('sensorIdInput').value;
+            const alertEl = document.getElementById('thermalAlert');
+
+            try {
+                const res = await apiClient.logThermalReading(donId, tempF, 68.0, sensorId);
+                alertEl.style.display = 'block';
+                if (res.is_compliant) {
+                    alertEl.className = 'alert alert-success';
+                    alertEl.innerHTML = `✅ Temperature <strong>${res.temp_f}°F</strong> is HACCP COMPLIANT (${res.haccp_status}). Safe transit window: ${res.safe_transit_window_remaining_minutes} min remaining.`;
+                } else {
+                    alertEl.className = 'alert alert-danger';
+                    alertEl.innerHTML = `⚠️ <strong>${res.haccp_status}:</strong> ${res.warning}`;
+                }
+                loadActiveViewData();
+            } catch (err) {
+                alertEl.style.display = 'block';
+                alertEl.className = 'alert alert-danger';
+                alertEl.textContent = `Error: ${err.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

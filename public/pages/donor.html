@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Portal | Enterprise Food Donation Platform</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="donor">
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">🍲</div>
+            <div>
+                <div class="brand-title">Donor Partner Portal</div>
+                <span class="brand-badge" id="donorNameHeader">Metro Whole Foods Market</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="/" class="nav-link">Overview</a>
+            <a href="/pages/administrator.html" class="nav-link">Administrator</a>
+            <a href="/pages/donor.html" class="nav-link active">Donor Portal</a>
+            <a href="/pages/recipient.html" class="nav-link">Recipient Portal</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="telemetry-banner">
+            <div class="telemetry-title">
+                <h1>Donor Sustainability & Surplus Ingestion</h1>
+                <p>Register surplus commercial food batches, monitor pickup progress, and track ESG impact.</p>
+            </div>
+            <div class="telemetry-status-bar">
+                <select id="donorSelector" class="form-control" style="width: auto; padding: 0.4rem 0.75rem; font-size: 0.8125rem;">
+                    <option value="org_donor_001">Metro Whole Foods Market</option>
+                    <option value="org_donor_002">Bistro Del Sol Catering</option>
+                    <option value="org_donor_003">Golden Gate Organic Bakery</option>
+                </select>
+                <div class="refresh-countdown" id="refreshTimerDisplay">Auto-refresh: 20s</div>
+                <button class="btn btn-secondary" id="manualRefreshBtn" style="padding: 0.4rem 0.75rem; font-size: 0.8125rem;">↻</button>
+            </div>
+        </section>
+
+        <!-- KPI Grid -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">Total Donations Posted</span>
+                <div class="kpi-value" id="donorTotalCount">--</div>
+                <div class="kpi-subtext positive">Active Partner</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Pounds Rescued (Month)</span>
+                <div class="kpi-value" id="donorWeightLbs">--</div>
+                <div class="kpi-subtext positive">Zero food waste goal</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Meals Provided</span>
+                <div class="kpi-value" id="donorMealsCount">--</div>
+                <div class="kpi-subtext positive">Community food security</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">ESG Carbon Saved</span>
+                <div class="kpi-value" id="donorCarbonSaved">--</div>
+                <div class="kpi-subtext positive">1.90 kg CO2e / lb avoided</div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <!-- Surplus Ingestion Wizard -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">Post Surplus Food Batch</h2>
+                    <span class="badge badge-success">HACCP Certified</span>
+                </div>
+                <div id="formAlertBox" class="alert" style="display: none;"></div>
+                <form id="surplusIngestForm">
+                    <input type="hidden" id="donorIdInput" value="org_donor_001">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Food Category</label>
+                            <select id="foodCategoryInput" class="form-control" required>
+                                <option value="Prepared Meals">Prepared Meals (Hot/Chilled)</option>
+                                <option value="Fresh Produce">Fresh Produce & Fruits</option>
+                                <option value="Bakery & Bread">Bakery & Bread</option>
+                                <option value="Dairy & Proteins">Dairy & Proteins</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Batch Weight (lbs)</label>
+                            <input type="number" step="0.5" id="weightInput" class="form-control" placeholder="e.g. 150.0" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Initial Core Temp (°F)</label>
+                            <input type="number" step="0.1" id="tempInput" class="form-control" placeholder="<41°F cold or >135°F hot" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pickup Address</label>
+                            <input type="text" id="addressInput" class="form-control" value="101 Market St, San Francisco, CA" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description & Packaging Details</label>
+                        <input type="text" id="descriptionInput" class="form-control" placeholder="e.g. 40 packaged roasted chicken & quinoa bowls" required>
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                        <input type="checkbox" id="perishableInput" checked>
+                        <label for="perishableInput" style="font-size: 0.875rem;">Perishable Food (enforces strict 2-hour biological safe transit window)</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+                        🚀 Register Surplus & Dispatch Matching Engine
+                    </button>
+                </form>
+            </div>
+
+            <!-- Active Listings -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">Active Batches</h2>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Category</th>
+                                <th>Weight</th>
+                                <th>HACCP</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donorListingsBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted);">Loading active batches...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Food Donation Platform | Cloud-Native Logistics Mesh</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="overview">
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">🥗</div>
+            <div>
+                <div class="brand-title">FoodMesh Platform</div>
+                <span class="brand-badge">Cloud-Native Logistics Mesh</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="/" class="nav-link active">Overview</a>
+            <a href="/pages/administrator.html" class="nav-link">Administrator</a>
+            <a href="/pages/donor.html" class="nav-link">Donor Portal</a>
+            <a href="/pages/recipient.html" class="nav-link">Recipient Portal</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Telemetry Status Banner -->
+        <section class="telemetry-banner">
+            <div class="telemetry-title">
+                <h1>Logistics Telemetry & Operational Mesh</h1>
+                <p>Real-time surplus food matching, HACCP thermal compliance, and automated 3PL failover mesh.</p>
+            </div>
+            <div class="telemetry-status-bar">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.875rem;">
+                    <span class="pulse-indicator"></span> System Operational
+                </div>
+                <div class="refresh-countdown" id="refreshTimerDisplay">Auto-refresh: 20s</div>
+                <button class="btn btn-secondary" id="manualRefreshBtn" style="padding: 0.4rem 0.75rem; font-size: 0.8125rem;">
+                    ↻ Refresh
+                </button>
+            </div>
+        </section>
+
+        <!-- KPI Metrics Grid -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">Active Surplus Donations</span>
+                <div class="kpi-value" id="activeDonationsCount">--</div>
+                <div class="kpi-subtext positive">● Proximity search active</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">PostGIS Match Latency (P99)</span>
+                <div class="kpi-value" id="matchLatencyP99">--</div>
+                <div class="kpi-subtext positive">✓ Target < 30.0s</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Claim Fulfillment Rate</span>
+                <div class="kpi-value" id="fulfillmentRate">--</div>
+                <div class="kpi-subtext positive">✓ Target >= 85.0%</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Safe Window Compliance</span>
+                <div class="kpi-value" id="complianceRate">--</div>
+                <div class="kpi-subtext positive">✓ 2-hr Biological Safety Window</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Total Rescued Volume</span>
+                <div class="kpi-value" id="totalRescuedLbs">--</div>
+                <div class="kpi-subtext positive">Monthly milestone target: 50k lbs</div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">CO2e Greenhouse Gas Avoided</span>
+                <div class="kpi-value" id="co2SavedKg">--</div>
+                <div class="kpi-subtext positive">WARM standard factor: 1.90 kg/lb</div>
+            </div>
+        </section>
+
+        <!-- Active Logistics Feeds -->
+        <section class="dashboard-grid">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">Active Dispatches & Courier Mesh</h2>
+                    <span class="badge badge-primary">Dual-Fleet Engine</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dispatch ID</th>
+                                <th>Item & Weight</th>
+                                <th>Carrier Fleet</th>
+                                <th>Status</th>
+                                <th>TTL</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dispatchesTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted);">Connecting to live logistics feed...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">Platform Quick Actions</h2>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                    Access role-specific interfaces or execute immediate testing scenarios:
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a href="/pages/administrator.html" class="btn btn-primary" style="justify-content: flex-start;">
+                        📊 Administrator Operations Center
+                    </a>
+                    <a href="/pages/donor.html" class="btn btn-secondary" style="justify-content: flex-start;">
+                        🍲 Donor Surplus Ingestion Wizard
+                    </a>
+                    <a href="/pages/recipient.html" class="btn btn-secondary" style="justify-content: flex-start;">
+                        🏢 Recipient Capacity & Handover
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
